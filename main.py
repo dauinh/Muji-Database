@@ -4,6 +4,8 @@ import os
 # importing necessary functions from dotenv library
 from dotenv import load_dotenv, dotenv_values 
 
+from pprint import pprint
+
 # loading variables from .env file
 load_dotenv() 
 print(os.getenv("USERNAME"), os.getenv("PASSWORD"))
@@ -19,4 +21,4 @@ query = "SELECT * FROM store"
 cursor.execute(query)
 
 results = cursor.fetchall()
-print(results)
+pprint(results)
