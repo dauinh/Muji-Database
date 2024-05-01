@@ -7,17 +7,18 @@ from pprint import pprint
 # loading variables from .env file
 load_dotenv()
 
-cnx = mysql.connector.connect(user=os.getenv("USERNAME"), password=os.getenv("PASSWORD"),
+def connect_to_database():
+    return mysql.connector.connect(user=os.getenv("USERNAME"), password=os.getenv("PASSWORD"),
                               host='136.244.224.221',
                               database='com303fplu')
-
-cursor = cnx.cursor()
 
 #FUNCTIONS
 #1. Add inventory to a warehouse (table product)
 def add_inventory_to_product():
     try:
-    # Input product details
+        cnx = connect_to_database()
+        cursor = cnx.cursor()
+        # Input product details
         id = input("Enter product id: ")
         name = input("Enter product name: ")
         details = input("Enter product details: ")
@@ -35,12 +36,16 @@ def add_inventory_to_product():
         print("Error adding inventory to product")
     # Commit the transaction
     cnx.commit()
+    cursor.close()
+    cnx.close()
 
 
 #2. Add inventory to a store from a warehouse 
 #2.1. Check the inventory of the product in the warehouse
 def add_inventory_to_store():
     try:
+        cnx = connect_to_database()
+        cursor = cnx.cursor()
         product_id = input("Enter product id:")
         store_id = input("Enter store id:")
         number_of_entities = int(input("Enter number of entities to add:"))
@@ -60,7 +65,7 @@ def add_inventory_to_store():
             
             if current_quantity >= number_of_entities:
                 cursor.execute(update_query, (current_quantity - number_of_entities, product_id,))
-                print("Remove ", number_of_entities, "units of product. Current quantity in warehouse is", current_quantity-number_of_entities)
+                print(f"Remove {number_of_entities} units of product. Current quantity in warehouse is {current_quantity-number_of_entities}")
         except:
             print("Product doesn't exist.")
         #2.3. Add n unit(s) of the product to the store
@@ -79,7 +84,7 @@ def add_inventory_to_store():
                                     WHERE product_id = %s\
                                     AND store_id = %s"
                 cursor.execute(update_query_owns, (update_quantity, product_id, store_id,))
-                print("Added",number_of_entities,"of product_id",product_id ,"into storeId ", store_id)
+                print(f"Added {number_of_entities} of product_id {product_id} into storeId {store_id}")
             else:
                 print("product doesn't exist in store. Need to create new record for this product")
                 insert_query_owns = "INSERT INTO owns (product_id, store_id, price, quantity) VALUES %s"
@@ -89,11 +94,7 @@ def add_inventory_to_store():
         except:
             print("Error adding product into DB. Check storeId and productId.")
         cnx.commit()
+        cursor.close()
+        cnx.close()
     except:
         print("An error occurs.")
-
-
-add_inventory_to_product()
-
-cursor.close()
-cnx.close()
