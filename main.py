@@ -1,3 +1,8 @@
+import os
+from dotenv import load_dotenv
+import mysql.connector
+
+from pprint import pprint
 import queries, add_inventory
 
 def main():
