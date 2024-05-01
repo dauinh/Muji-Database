@@ -57,4 +57,4 @@ if __name__ == "__main__":
     cnx = mysql.connector.connect(user=os.getenv("USERNAME"), password=os.getenv("PASSWORD"),
                                 host='136.244.224.221',
                                 database='com303fplu')
-    shift_inventory(cnx, 'P001', 5, 'S009', 'S003')
+    shift_inventory(cnx, 'P003', 5, 'S009', 'S003')
