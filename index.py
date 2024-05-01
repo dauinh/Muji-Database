@@ -17,17 +17,22 @@ cursor = cnx.cursor()
 #FUNCTIONS
 #1. Add inventory to a warehouse (table product)
 def add_inventory_to_product():
+    # Input product details
     id = input("Enter product id: ")
     name = input("Enter product name: ")
     details = input("Enter product details: ")
     material_care = input("Enter material care: ")
     quantity = input("Enter quantity: ")
     cost = input("Enter cost: ")
-    is_active = input("Enter status (1/0): ")
+    is_active = input("Enter status (1/0):")
 
+    is_active = int(bool(int(is_active)))
+
+    # Insert product into database
+    INSERT_PRODUCT = "INSERT INTO product (id, name, details, material_care, quantity, cost, is_active) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    cursor.execute(INSERT_PRODUCT, (id, name, details, material_care, quantity, cost, is_active,))
     
-    INSERT_PRODUCT = "INSERT INTO product (id, name, details, material_care, quantity) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-    cursor.execute(INSERT_PRODUCT, (id, name, details, material_care, quantity, cost, is_active, ))
+    # Commit the transaction
     cnx.commit()
 
 
