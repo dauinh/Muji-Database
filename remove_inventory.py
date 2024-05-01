@@ -5,8 +5,7 @@ from dotenv import load_dotenv
 from pprint import pprint
 
 # loading variables from .env file
-load_dotenv() 
-print(os.getenv("USERNAME"), os.getenv("PASSWORD"))
+load_dotenv()
 
 cnx = mysql.connector.connect(user=os.getenv("USERNAME"), password=os.getenv("PASSWORD"),
                               host='136.244.224.221',
@@ -16,7 +15,7 @@ cursor = cnx.cursor()
 
 query = """UPDATE product
         SET is_active = 0
-        WHERE id =  %s;"""
+        WHERE id = %s;"""
 
 product_id = 'P015'
 
