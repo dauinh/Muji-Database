@@ -3,7 +3,8 @@ from dotenv import load_dotenv
 import mysql.connector
 
 from pprint import pprint
-import queries, add_inventory
+from queries import connect_to_database
+import queries, add_inventory, remove_inventory, shift_inventory
 
 def main():
     print('Welcome to Muji Database!')
@@ -45,7 +46,6 @@ def main():
                                 print("Top selling products at store:")
                                 pprint(res)
                             case '3':
-                                store_id = input("Enter the store Id: ")
                                 res = queries.store_with_highest_total_sales_revenue()
                                 print("Store with highest total sales revenue:")
                                 pprint(res)
@@ -99,6 +99,19 @@ def main():
                                 add_inventory.add_inventory_to_product()
                             case '2':
                                 add_inventory.add_inventory_to_store()
+                            case '3':
+                                conn = connect_to_database()
+                                product_id = input("Enter product id: ")
+                                remove_inventory.remove_inventory(conn, product_id)
+                                conn.close()
+                            case '4':
+                                conn = connect_to_database()
+                                product_id = input("Enter product id: ")
+                                quantity = input("Enter amount you want to move: ")
+                                source_store_id = input("Enter the source store id: ")
+                                target_store_id = input("Enter the target store id: ")
+                                shift_inventory.shift_inventory(conn, product_id, int(quantity), source_store_id, target_store_id)
+                                conn.close()
                         chosen_num = input("Enter a number or # to view the menu: ")
         
         if option == 'q':
