@@ -11,21 +11,18 @@ def connect_to_database():
                               host='136.244.224.221',
                               database='com303fplu')
     
-# What is the current inventory of a specific product at a particular store?
-def current_inventory_of_product_at_store(product_id, store_id):
+# What is the current inventory of a particular store?
+def current_inventory_of_store(store_id):
     try:
         cnx = connect_to_database()
         cursor = cnx.cursor()
-        query = """
-            SELECT o.store_id, o.product_id, p.name, o.quantity
-            FROM product p, owns o
-            WHERE p.is_active = 1
-            AND o.product_id = %s
-            AND o.store_id = %s
-            AND p.id = %s
-        """
-        cursor.execute(query, (product_id, store_id, product_id,))
-        result = cursor.fetchone()
+        query = """SELECT o.store_id, o.product_id, p.name, o.quantity
+                    FROM product p, owns o
+                    WHERE p.is_active = 1
+                        AND o.product_id = p.id
+                        AND o.store_id = %s;"""
+        cursor.execute(query, (store_id,))
+        result = cursor.fetchall()
         cursor.close()
         cnx.close()
         return result
@@ -59,16 +56,13 @@ def store_with_highest_total_sales_revenue():
     try:
         cnx = connect_to_database()
         cursor = cnx.cursor()
-        query = """
-            SELECT st.id,  SUM(sl.quantity * sl.price) AS total_revenue
-            FROM transaction t, sales sl, store st
-            WHERE t.store_id = st.id AND t.id = sl.transaction_id
-            GROUP BY st.id
-            ORDER BY total_revenue DESC
-            LIMIT 1
-        """
+        query = """SELECT st.id,  SUM(sl.quantity * sl.price) AS total_revenue
+                    FROM transaction t, sales sl, store st
+                    WHERE t.store_id = st.id AND t.id = sl.transaction_id
+                    GROUP BY st.id
+                    ORDER BY total_revenue DESC;"""
         cursor.execute(query)
-        result = cursor.fetchone()
+        result = cursor.fetchall()
         cursor.close()
         cnx.close()
         return result
@@ -153,13 +147,11 @@ def products_with_highest_profit_margin():
     try:
         cnx = connect_to_database()
         cursor = cnx.cursor()
-        query = """
-            SELECT p.id, p.name, SUM((s.price - p.cost) * s.quantity) AS profit
-            FROM product p, sales s
-            WHERE p.id = s.product_id
-            GROUP BY p.id, p.name
-            ORDER BY profit DESC
-        """
+        query = """SELECT p.id, p.name, (SUM((s.price - p.cost) * s.quantity) / SUM(s.price * s.quantity)) * 100 AS profit_margin
+                    FROM product p, sales s
+                    WHERE p.id = s.product_id
+                    GROUP BY p.id, p.name
+                    ORDER BY profit_margin DESC;"""
         cursor.execute(query)
         results = cursor.fetchall()
         cursor.close()
@@ -210,24 +202,24 @@ def stores_with_highest_percentage_of_repeat_customers():
         print(f"Error: {err}")
 
 # What are the most popular product combinations purchased together by customers?
-def most_popular_product_combinations():
+def most_popular_product_combinations(product_id):
     try:
         cnx = connect_to_database()
         cursor = cnx.cursor()
         query = """
-            WITH P001_transaction AS (
+            WITH target_transaction AS (
                 SELECT transaction_id
                 FROM sales
                 WHERE product_id = 'P001'
             )
             SELECT product_id, COUNT(*) AS count
             FROM sales
-            WHERE transaction_id IN (SELECT transaction_id FROM P001_transaction)
-                AND NOT product_id = 'P001'
+            WHERE transaction_id IN (SELECT transaction_id FROM target_transaction)
+                AND NOT product_id = %s
             GROUP BY product_id
             ORDER BY count DESC
         """
-        cursor.execute(query)
+        cursor.execute(query, (product_id,))
         results = cursor.fetchall()
         cursor.close()
         cnx.close()
@@ -238,13 +230,13 @@ def most_popular_product_combinations():
 # Example usage of each function
 if __name__ == "__main__":
     # Example usage of each function
-    print("Current inventory of product at store:", current_inventory_of_product_at_store('P001', 'S001'))
-    print("Top selling products at store:", top_selling_products_at_store('S001'))
-    print("Store with highest total sales revenue:", store_with_highest_total_sales_revenue())
-    print("Stores with most sales this year:", stores_with_most_sales_this_year())
-    print("Number of customers in frequent shopper program:", number_of_customers_in_frequent_shopper_program())
-    print("Average order value comparison:", average_order_value_comparison())
-    print("Products with highest profit margin:", products_with_highest_profit_margin())
-    print("Sales performance of product across stores:", sales_performance_of_product_across_stores('P001'))
-    print("Stores with highest percentage of repeat customers:", stores_with_highest_percentage_of_repeat_customers())
-    print("Most popular product combinations:", most_popular_product_combinations())
+    print("\nCurrent inventory of store:", current_inventory_of_store('S001'))
+    print("\nTop selling products at store:", top_selling_products_at_store('S001'))
+    print("\nStore with highest total sales revenue:", store_with_highest_total_sales_revenue())
+    print("\nStores with most sales this year:", stores_with_most_sales_this_year())
+    print("\nNumber of customers in frequent shopper program:", number_of_customers_in_frequent_shopper_program())
+    print("\nAverage order value comparison:", average_order_value_comparison())
+    print("\nProducts with highest profit margin:", products_with_highest_profit_margin())
+    print("\nSales performance of product across stores:", sales_performance_of_product_across_stores('P001'))
+    print("\nStores with highest percentage of repeat customers:", stores_with_highest_percentage_of_repeat_customers())
+    print("\nMost popular product combinations:", most_popular_product_combinations('P002'))
