@@ -10,7 +10,7 @@ def main():
     print("Let's explore the database! Select one of these questions:")
     chosen_num = None
     
-    print("1. What is the current inventory of a specific product at a particular store?")
+    print("1. What is the current inventory of a particular store?")
     print("2. What are the 20 top-selling products at each store?")
     print("3. Which store has the highest total sales revenue?")
     print("4. What are the 5 stores with the most sales so far this year?")
