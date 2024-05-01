@@ -1,6 +1,17 @@
+import os
+from dotenv import load_dotenv
+import mysql.connector
+
+from pprint import pprint
 import queries
 
 def main():
+    # loading variables from .env file
+    load_dotenv()
+    cnx = mysql.connector.connect(user=os.getenv("USERNAME"), password=os.getenv("PASSWORD"),
+                                host='136.244.224.221',
+                                database='com303fplu')
+    
     print('Welcome to Muji Database!')
     print("Let's explore the database! Select one of these questions:")
     chosen_num = None
