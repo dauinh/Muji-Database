@@ -18,7 +18,7 @@ def main():
             if option == '1':
                 while chosen_num == '#' or chosen_num != 'q':
                     print("Select on of the questions below:")
-                    print("1. What is the current inventory of a specific product at a particular store?")
+                    print("1. What is the current inventory of a particular store?")
                     print("2. What are the 20 top-selling products at each store?")
                     print("3. Which store has the highest total sales revenue?")
                     print("4. What are the 5 stores with the most sales so far this year?")
@@ -35,39 +35,40 @@ def main():
                     while chosen_num != '#':
                         match chosen_num:
                             case '1':
-                                product_id = input("Enter the product Id: ")
                                 store_id = input("Enter the store Id: ")
-                                res = queries.current_inventory_of_product_at_store(product_id, store_id)
-                                print("Current inventory of product at store:", res)
+                                res = queries.current_inventory_of_store(store_id)
+                                pprint("Current inventory of product at store:", res)
                             case '2':
                                 store_id = input("Enter the store Id: ")
                                 res = queries.top_selling_products_at_store(store_id)
-                                print("Top selling products at store:", res)
+                                pprint("Top selling products at store:", res)
                             case '3':
+                                store_id = input("Enter the store Id: ")
                                 res = queries.store_with_highest_total_sales_revenue()
-                                print("Store with highest total sales revenue:", res)
+                                pprint("Store with highest total sales revenue:", res)
                             case '4':
                                 res = queries.stores_with_most_sales_this_year()
-                                print("Stores with most sales this year:", res)
+                                pprint("Stores with most sales this year:", res)
                             case '5':
                                 res = queries.number_of_customers_in_frequent_shopper_program()
-                                print("Number of customers in frequent shopper program:", res)
+                                pprint(f"Number of customers in frequent shopper program: {res[1]} out of {res[0]} total customer")
                             case '6':
                                 res = queries.average_order_value_comparison()
-                                print("Average order value comparison:", res)
+                                pprint("Average order value comparison:", res)
                             case '7':
                                 res = queries.products_with_highest_profit_margin()
-                                print("Products with highest profit margin:", res)
+                                pprint("Products with highest profit margin:", res)
                             case '8':
                                 product_id = input("Enter product id: ")
                                 res = queries.sales_performance_of_product_across_stores(product_id)
-                                print("Sales performance of product across stores:", res)
+                                pprint("Sales performance of product across stores:", res)
                             case '9':
                                 res = queries.stores_with_highest_percentage_of_repeat_customers()
-                                print("Stores with highest percentage of repeat customers:", res)
+                                pprint("Stores with highest percentage of repeat customers:", res)
                             case '10':
-                                res = queries.most_popular_product_combinations()
-                                print("Most popular product combinations:", res)
+                                product_id = input("Enter product id: ")
+                                res = queries.most_popular_product_combinations(product_id)
+                                pprint(f"Most popular product combinations with {product_id}:", res)
                         chosen_num = input("Enter a number or # to view the menu: ")
                         
             elif option == '2':
