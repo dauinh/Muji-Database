@@ -1,6 +1,10 @@
+import queries
+
 def main():
     print('Welcome to Muji Database!')
     print("Let's explore the database! Select one of these questions:")
+    chosen_num = None
+    
     print("1. What is the current inventory of a specific product at a particular store?")
     print("2. What are the 20 top-selling products at each store?")
     print("3. Which store has the highest total sales revenue?")
@@ -11,6 +15,51 @@ def main():
     print("8. How does the sales performance of a particular product compare between different store locations?")
     print("9. Which store locations have the highest percentage of repeat customers?")
     print("10. What are the most popular product combinations purchased together by customers?")
+    print("Or enter # to quit")
+    chosen_num = input("Enter the number or # to quit: ")
+    while chosen_num != '#':
+        match chosen_num:
+            case '1':
+                product_id = input("Enter the product Id: ")
+                store_id = input("Enter the store Id: ")
+                res = queries.current_inventory_of_product_at_store(product_id, store_id)
+                print("Current inventory of product at store:", res)
+            case '2':
+                store_id = input("Enter the store Id: ")
+                res = queries.top_selling_products_at_store(store_id)
+                print("Top selling products at store:", res)
+            case '3':
+                store_id = input("Enter the store Id: ")
+                res = queries.store_with_highest_total_sales_revenue()
+                print("Store with highest total sales revenue:", res)
+            case '4':
+                res = queries.stores_with_most_sales_this_year()
+                print("Stores with most sales this year:", res)
+            case '5':
+                res = queries.number_of_customers_in_frequent_shopper_program()
+                print("Number of customers in frequent shopper program:", res)
+            case '6':
+                res = queries.average_order_value_comparison()
+                print("Average order value comparison:", res)
+            case '7':
+                res = queries.products_with_highest_profit_margin()
+                print("Products with highest profit margin:", res)
+            case '8':
+                product_id = input("Enter product id: ")
+                res = queries.sales_performance_of_product_across_stores(product_id)
+                print("Sales performance of product across stores:", res)
+            case '9':
+                res = queries.stores_with_highest_percentage_of_repeat_customers()
+                print("Stores with highest percentage of repeat customers:", res)
+            case '10':
+                res = queries.most_popular_product_combinations()
+                print("Most popular product combinations:", res)
+
+        
+        chosen_num = input("Enter the number or # to quit: ")
+            
+
+
 
 
 if __name__ == "__main__":
