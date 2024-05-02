@@ -8,40 +8,40 @@ import queries, add_inventory, remove_inventory, shift_inventory
 
 def main():
     print('Welcome to Muji Database!')
-    print("Let's explore the database! What do you wanna do today?")
+    print("Let's explore the database! What do you wanna do today?\n")
     option = '#'
     while option == '#':
         print("1. View performance")    
         print("2. Update/remove records in database")
-        option = input("Enter a number or q to quit: ")
+        option = input("\nEnter a number or q to quit: ")
         while option != '#' and option != 'q':
             chosen_num = '#'
             if option == '1':
                 while chosen_num == '#' or chosen_num != 'q':
-                    print("Select on of the questions below:")
+                    print("\nSelect on of the questions below:\n")
                     print("1. What is the current inventory of a particular store?")
-                    print("2. What are the 20 top-selling products at each store?")
+                    print("2. What are the 20 top-selling products at a particular store?")
                     print("3. Which store has the highest total sales revenue?")
-                    print("4. What are the 5 stores with the most sales so far this year?")
+                    print("4. What are the 5 stores with the most sales so far this month?")
                     print("5. How many customers are currently enrolled in the frequent-shopper program?")
                     print("6. What is the average order value for online orders compared to in-store purchases?")
                     print("7. Which products have the highest profit margin across all stores?")
                     print("8. How does the sales performance of a particular product compare between different store locations?")
                     print("9. Which store locations have the highest percentage of repeat customers?")
                     print("10. What are the most popular product combinations purchased together by customers?")
-                    chosen_num = input("Enter the number or q to go back to main menu: ")
+                    chosen_num = input("\nEnter the number or q to go back to main menu:")
                     if chosen_num == 'q':
                         option = '#'
                         break
                     while chosen_num != '#':
                         match chosen_num:
                             case '1':
-                                store_id = input("Enter the store Id: ")
+                                store_id = input("Enter the store id: ")
                                 res = queries.current_inventory_of_store(store_id)
                                 print("Current inventory of product at store:")
                                 pprint(res)
                             case '2':
-                                store_id = input("Enter the store Id: ")
+                                store_id = input("Enter the store id: ")
                                 res = queries.top_selling_products_at_store(store_id)
                                 print("Top selling products at store:")
                                 pprint(res)
@@ -50,8 +50,8 @@ def main():
                                 print("Store with highest total sales revenue:")
                                 pprint(res)
                             case '4':
-                                res = queries.stores_with_most_sales_this_year()
-                                print("Stores with most sales this year:")
+                                res = queries.stores_with_most_sales_this_month()
+                                print("Stores with most sales this month:")
                                 pprint(res)
                             case '5':
                                 res = queries.number_of_customers_in_frequent_shopper_program()
@@ -78,16 +78,16 @@ def main():
                                 res = queries.most_popular_product_combinations(product_id)
                                 print(f"Most popular product combinations with {product_id}:")
                                 pprint(res)
-                        chosen_num = input("Enter a number or # to view the menu: ")
+                        chosen_num = input("\nEnter a number or # to view the menu: ")
                         
             elif option == '2':
                 while chosen_num == '#' or chosen_num != 'q':
-                    print("Select on of the options below:")
+                    print("\nSelect on of the options below:\n")
                     print("1. Add inventory to the warehouse")
                     print("2. Add inventory to a store")
                     print("3. Remove inventory")
                     print("4. Shift inventory")
-                    chosen_num = input("Enter a number or q to go back to main menu: ")
+                    chosen_num = input("\nEnter a number or q to go back to main menu: ")
 
                     if chosen_num == 'q':
                         option = '#'
@@ -112,7 +112,7 @@ def main():
                                 target_store_id = input("Enter the target store id: ")
                                 shift_inventory.shift_inventory(conn, product_id, int(quantity), source_store_id, target_store_id)
                                 conn.close()
-                        chosen_num = input("Enter a number or # to view the menu: ")
+                        chosen_num = input("\nEnter a number or # to view the menu: ")
         
         if option == 'q':
             break
