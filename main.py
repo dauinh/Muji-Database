@@ -124,23 +124,24 @@ def main():
                     is_authenticated = False
                     strike = 0 
                     if chosen_num == '1':
-                        is_authenticated = online_purchase.sign_up()
+                        is_authenticated, customer_id = online_purchase.sign_up()
+                        view_menu = "view"
                     elif chosen_num == '2':
                         for _ in range(3):
                             if not is_authenticated and strike > 0:
                                 print("Invalid user name or password. Please try again.")
-                            is_authenticated = online_purchase.login()
+                            is_authenticated, customer_id = online_purchase.login()
                             if not is_authenticated:
                                 strike += 1
                             else:
+                                view_menu = "view"
                                 break
                         if not is_authenticated:
                             view_menu = input("You've had 3 tries. Enter '#' view menu or q to quit: ")
 
                 if view_menu == 'q':
                     break
-
-                online_purchase.make_purchase()
+                online_purchase.make_purchase(customer_id)
                 option = "#"
 
         if option == 'q':

@@ -18,9 +18,17 @@ def connect_to_database():
                               host='136.244.224.221',
                               database='com303fplu')
 
+def create_customer(customer_id):
+    try:
+        cnx = connect_to_database()
+        cursor = cnx.cursor()
+        query = """INSERT INTO customer (id) VALUES (%s)"""
+        cursor.execute(query, (customer_id, ))
+        cnx.commit()
 
-def sign_up():
-   import mysql.connector
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+    
 
 def sign_up():
     try:
@@ -36,11 +44,22 @@ def sign_up():
                 print("User name already exists. Please choose another user name.")
             else:
                 password = input("Enter password: ")
-                query = "INSERT INTO user (user_name, password) VALUES (%s, %s)"
-                cursor.execute(query, (user_name, password,))
+                count = 1
+                while count > 0:
+                    new_customer_id = 'CUS' + str(random.randint(100, 999))
+                    check_customer_query = """SELECT COUNT(*) FROM customer WHERE id = %s"""
+                    cursor.execute(check_customer_query, (new_customer_id, ))
+                    count = cursor.fetchone()[0]
+
+                #create customer in customer table
+                create_customer(new_customer_id)
+
+                #add customer into user table
+                query = "INSERT INTO user (user_name, password, customer_id) VALUES (%s, %s, %s)"
+                cursor.execute(query, (user_name, password,new_customer_id, ))
                 cnx.commit()
                 print("Successfully signed up as a new user!")
-                return True
+                return True,new_customer_id
                 break  # Exit the loop after successful signup
     except mysql.connector.Error as err:
         print(f"Error: {err}")
@@ -61,9 +80,14 @@ def login():
         result = cursor.fetchall()
         if result:
             fetched_password = result[0][0]
-            return True if fetched_password == password else False
+            if fetched_password == password:
+                get_customer_id_query = "SELECT customer_id FROM user WHERE user_name = %s"
+                cursor.execute(get_customer_id_query, (user_name, ))
+                customer_id = cursor.fetchall()[0][0]
+                return True, customer_id
+            return False, None
         else:
-            return False
+            return False, None
     except mysql.connector.Error as err:
         print(f"Error: {err}")
 
@@ -104,7 +128,7 @@ def check_quantity(productId):
         print(f"Error: {err}")
 
 
-def make_purchase():
+def make_purchase(customer_id):
     transaction = {}
     try:
         cnx = connect_to_database()
@@ -152,7 +176,7 @@ def make_purchase():
             updated = False
             while not updated:
                 try:
-                    cursor.execute(insert_query,(new_transaction_id, 'S000', 'test', current_time))
+                    cursor.execute(insert_query,(new_transaction_id, 'S000', customer_id, current_time))
                     cnx.commit()
                     updated = True
                 except mysql.connector.Error:
@@ -169,10 +193,11 @@ def make_purchase():
             price = quantity * unit_price
             total_bill += price
         
-        print(f"Total bill is: ${total_bill}")
+        print(f"Total bill is: ${total_bill} \n")
 
 
     except mysql.connector.Error as err:
         print(f"Error: {err}")
 
 
+# print(sign_up())
