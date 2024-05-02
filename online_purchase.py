@@ -11,6 +11,8 @@ from pprint import pprint
 # loading variables from .env file
 load_dotenv()
 
+#TODO: user table and generate customer_id
+
 def connect_to_database():
     return mysql.connector.connect(user=os.getenv("USERNAME"), password=os.getenv("PASSWORD"),
                               host='136.244.224.221',
@@ -144,4 +146,4 @@ def make_purchase():
         print(f"Error: {err}")
 
 
-make_purchase()
+# make_purchase()

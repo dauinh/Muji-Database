@@ -4,7 +4,7 @@ import mysql.connector
 
 from pprint import pprint
 from queries import connect_to_database
-import queries, add_inventory, remove_inventory, shift_inventory
+import queries, add_inventory, remove_inventory, shift_inventory, online_purchase
 
 def main():
     print('Welcome to Muji Database!')
@@ -13,6 +13,7 @@ def main():
     while option == '#':
         print("1. View performance")    
         print("2. Update/remove records in database")
+        print("3. Make online purchase")
         option = input("\nEnter a number or q to quit: ")
         while option != '#' and option != 'q':
             chosen_num = '#'
@@ -113,7 +114,10 @@ def main():
                                 shift_inventory.shift_inventory(conn, product_id, int(quantity), source_store_id, target_store_id)
                                 conn.close()
                         chosen_num = input("\nEnter a number or # to view the menu: ")
-        
+            elif option == '3':
+                online_purchase.make_purchase()
+                option = "#"
+
         if option == 'q':
             break
 
