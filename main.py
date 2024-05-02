@@ -20,7 +20,7 @@ def main():
                 while chosen_num == '#' or chosen_num != 'q':
                     print("\nSelect on of the questions below:\n")
                     print("1. What is the current inventory of a particular store?")
-                    print("2. What are the 20 top-selling products at a particular store?")
+                    print("2. What are the top-selling products at a particular store?")
                     print("3. Which store has the highest total sales revenue?")
                     print("4. What are the 5 stores with the most sales so far this month?")
                     print("5. How many customers are currently enrolled in the frequent-shopper program?")

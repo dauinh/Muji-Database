@@ -43,7 +43,6 @@ def top_selling_products_at_store(store_id):
             AND store_id = %s
             GROUP BY product.name
             ORDER BY quantity_sold DESC
-            LIMIT 20;
         """
         cursor.execute(query, (store_id,))
         results = cursor.fetchall()
@@ -173,10 +172,11 @@ def sales_performance_of_product_across_stores(product_id):
         cnx = connect_to_database()
         cursor = cnx.cursor()
         query = """
-            SELECT s.product_id, t.store_id , s.price as sale_price, s.quantity as sale_quantity
+            SELECT t.store_id , s.price as sale_price, SUM(s.quantity) as sale_quantity
             FROM sales AS s, transaction AS t
             WHERE s.transaction_id = t.id
             AND s.product_id = %s
+            GROUP BY t.store_id , sale_price;
         """
         cursor.execute(query, (product_id,))
         results = cursor.fetchall()
@@ -199,6 +199,7 @@ def stores_with_highest_percentage_of_repeat_customers():
             FROM customer c, transaction t
             WHERE t.customer_id = c.id
             GROUP BY t.store_id
+            ORDER BY membership_percentage DESC
         """
         cursor.execute(query)
         results = cursor.fetchall()
@@ -214,17 +215,18 @@ def most_popular_product_combinations(product_id):
         cnx = connect_to_database()
         cursor = cnx.cursor()
         query = """
-            WITH target_transaction AS (
+            WITH P001_transaction AS (
                 SELECT transaction_id
                 FROM sales
                 WHERE product_id = 'P001'
             )
-            SELECT product_id, COUNT(*) AS count
-            FROM sales
-            WHERE transaction_id IN (SELECT transaction_id FROM target_transaction)
-                AND NOT product_id = %s
-            GROUP BY product_id
-            ORDER BY count DESC
+            SELECT s.product_id, p.name, COUNT(*) AS count
+            FROM sales s, product p
+            WHERE transaction_id IN (SELECT transaction_id FROM P001_transaction)
+                AND NOT s.product_id = %s
+                AND s.product_id = p.id
+            GROUP BY s.product_id
+            ORDER BY count DESC;
         """
         cursor.execute(query, (product_id,))
         results = cursor.fetchall()
@@ -244,6 +246,6 @@ if __name__ == "__main__":
     # print("\nNumber of customers in frequent shopper program:", number_of_customers_in_frequent_shopper_program())
     # print("\nAverage order value comparison:", average_order_value_comparison())
     # print("\nProducts with highest profit margin:", products_with_highest_profit_margin())
-    # print("\nSales performance of product across stores:", sales_performance_of_product_across_stores('P001'))
+    print("\nSales performance of product across stores:", sales_performance_of_product_across_stores('P001'))
     # print("\nStores with highest percentage of repeat customers:", stores_with_highest_percentage_of_repeat_customers())
-    # print("\nMost popular product combinations:", most_popular_product_combinations('P002'))
+    # print("\nMost popular product combinations:", most_popular_product_combinations('P015'))
