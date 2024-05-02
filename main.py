@@ -115,6 +115,31 @@ def main():
                                 conn.close()
                         chosen_num = input("\nEnter a number or # to view the menu: ")
             elif option == '3':
+                view_menu = '#'
+                while view_menu == '#':
+                    print("Select one of these options: ")
+                    print("1. Sign up")
+                    print("2. Log in")
+                    chosen_num = input("Enter a number: ")
+                    is_authenticated = False
+                    strike = 0 
+                    if chosen_num == '1':
+                        is_authenticated = online_purchase.sign_up()
+                    elif chosen_num == '2':
+                        for _ in range(3):
+                            if not is_authenticated and strike > 0:
+                                print("Invalid user name or password. Please try again.")
+                            is_authenticated = online_purchase.login()
+                            if not is_authenticated:
+                                strike += 1
+                            else:
+                                break
+                        if not is_authenticated:
+                            view_menu = input("You've had 3 tries. Enter '#' view menu or q to quit: ")
+
+                if view_menu == 'q':
+                    break
+
                 online_purchase.make_purchase()
                 option = "#"
 

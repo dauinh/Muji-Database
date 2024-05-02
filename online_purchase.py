@@ -19,23 +19,51 @@ def connect_to_database():
                               database='com303fplu')
 
 
-def sign_up(user_name, password):
+def sign_up():
+   import mysql.connector
+
+def sign_up():
     try:
         cnx = connect_to_database()
         cursor = cnx.cursor()
-        query = "INSERT INTO user (user_name, password) VALUES (%s, %s)"
-        cursor.execute(query, (user_name, password,))
+        while True:
+            user_name = input("Enter user name: ")
+            # Check if user_name already exists
+            exist_query = "SELECT COUNT(*) FROM user WHERE user_name = %s"
+            cursor.execute(exist_query, (user_name,))
+            count = cursor.fetchone()[0]
+            if count > 0:
+                print("User name already exists. Please choose another user name.")
+            else:
+                password = input("Enter password: ")
+                query = "INSERT INTO user (user_name, password) VALUES (%s, %s)"
+                cursor.execute(query, (user_name, password,))
+                cnx.commit()
+                print("Successfully signed up as a new user!")
+                return True
+                break  # Exit the loop after successful signup
     except mysql.connector.Error as err:
         print(f"Error: {err}")
+    finally:
+        cursor.close()
+        cnx.close()
 
-def login(user_name, password):
+
+def login():
     try:
         cnx = connect_to_database()
         cursor = cnx.cursor()
+        user_name = input("Enter user name: ")
+        password = input("Enter your password: ")
+        #check if passwords match
         get_password_query = "SELECT password FROM user WHERE user_name = %s"
         cursor.execute(get_password_query, (user_name, ))
-        fetched_password = cursor.fetchall()[0][0]
-        return True if fetched_password == password else False
+        result = cursor.fetchall()
+        if result:
+            fetched_password = result[0][0]
+            return True if fetched_password == password else False
+        else:
+            return False
     except mysql.connector.Error as err:
         print(f"Error: {err}")
 
@@ -81,7 +109,9 @@ def make_purchase():
     try:
         cnx = connect_to_database()
         cursor = cnx.cursor()
-        print("Which product do you want to buy?")
+        print("--------------------------------------------")
+        print("WELCOME TO MUJI'S ONLINE STORE!")
+        print("Which product do you want to buy today?")
         available_products = get_online_products()
         pprint(available_products)
         option = None
@@ -146,4 +176,3 @@ def make_purchase():
         print(f"Error: {err}")
 
 
-# make_purchase()
