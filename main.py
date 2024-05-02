@@ -4,7 +4,7 @@ import mysql.connector
 
 from pprint import pprint
 from queries import connect_to_database
-import queries, add_inventory, remove_inventory, shift_inventory
+import queries, add_inventory, remove_inventory, shift_inventory, online_purchase
 
 def main():
     print('Welcome to Muji Database!')
@@ -13,6 +13,7 @@ def main():
     while option == '#':
         print("1. View performance")    
         print("2. Update/remove records in database")
+        print("3. Make online purchase")
         option = input("\nEnter a number or q to quit: ")
         while option != '#' and option != 'q':
             chosen_num = '#'
@@ -43,7 +44,7 @@ def main():
                             case '2':
                                 store_id = input("Enter the store id: ")
                                 res = queries.top_selling_products_at_store(store_id)
-                                print("Top selling products at store:")
+                                print("Top selling products:")
                                 pprint(res)
                             case '3':
                                 res = queries.store_with_highest_total_sales_revenue()
@@ -113,7 +114,36 @@ def main():
                                 shift_inventory.shift_inventory(conn, product_id, int(quantity), source_store_id, target_store_id)
                                 conn.close()
                         chosen_num = input("\nEnter a number or # to view the menu: ")
-        
+            elif option == '3':
+                view_menu = '#'
+                while view_menu == '#':
+                    print("Select one of these options: ")
+                    print("1. Sign up")
+                    print("2. Log in")
+                    chosen_num = input("Enter a number: ")
+                    is_authenticated = False
+                    strike = 0 
+                    if chosen_num == '1':
+                        is_authenticated, customer_id = online_purchase.sign_up()
+                        view_menu = "view"
+                    elif chosen_num == '2':
+                        for _ in range(3):
+                            if not is_authenticated and strike > 0:
+                                print("Invalid user name or password. Please try again.")
+                            is_authenticated, customer_id = online_purchase.login()
+                            if not is_authenticated:
+                                strike += 1
+                            else:
+                                view_menu = "view"
+                                break
+                        if not is_authenticated:
+                            view_menu = input("You've had 3 tries. Enter '#' view menu or q to quit: ")
+
+                if view_menu == 'q':
+                    break
+                online_purchase.make_purchase(customer_id)
+                option = "#"
+
         if option == 'q':
             break
 
