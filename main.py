@@ -1,6 +1,5 @@
-import os
+
 from dotenv import load_dotenv
-import mysql.connector
 
 from pprint import pprint
 from queries import connect_to_database
@@ -12,7 +11,7 @@ def main():
     option = '#'
     while option == '#':
         print("1. View performance")    
-        print("2. Update/remove records in database")
+        print("2. Restock or Remove inventory")
         print("3. Make online purchase")
         option = input("\nEnter a number or q to quit: ")
         while option != '#' and option != 'q':
@@ -84,8 +83,8 @@ def main():
             elif option == '2':
                 while chosen_num == '#' or chosen_num != 'q':
                     print("\nSelect on of the options below:\n")
-                    print("1. Add inventory to the warehouse")
-                    print("2. Add inventory to a store")
+                    print("1. Restock inventory to the warehouse")
+                    print("2. Restock inventory to a store")
                     print("3. Remove inventory")
                     print("4. Shift inventory")
                     chosen_num = input("\nEnter a number or q to go back to main menu: ")

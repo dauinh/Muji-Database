@@ -145,8 +145,13 @@ def make_purchase(customer_id):
         #promt customer 
         while option != 'p':
             product_id = input("Please enter productId: ")
-            buy_quantity = int(input("Please enter quantity: "))
-            current_quantity = int(check_quantity(product_id))
+            try:
+                buy_quantity = int(input("Please enter quantity: "))
+                current_quantity = int(check_quantity(product_id))
+            except:
+                print("Invalid productId or quantity.")
+                break
+            
             if current_quantity >= buy_quantity:
                 transaction[product_id] = buy_quantity
                 print(f"Added {buy_quantity} of {product_id} to cart")
