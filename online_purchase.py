@@ -118,7 +118,9 @@ def check_quantity(productId):
         query = """SELECT o.quantity
                     FROM owns o, product p
                     WHERE o.store_id = "S000"
-                    AND o.product_id = %s"""
+                    AND p.id = %s
+                    AND o.product_id = p.id
+                    AND p.is_active = 1"""
         cursor.execute(query, (productId,))
         result = cursor.fetchall()[0][0]
         cursor.close()
