@@ -9,9 +9,13 @@ from pprint import pprint
 load_dotenv()
 
 def connect_to_database():
-    return mysql.connector.connect(user=os.getenv("USERNAME"), password=os.getenv("PASSWORD"),
-                              host='136.244.224.221',
-                              database='com303fplu')
+    try:
+        return mysql.connector.connect(user=os.getenv("USERNAME"), password=os.getenv("PASSWORD"),
+                                        host='136.244.224.221',
+                                        database='com303fplu')
+    except mysql.connector.Error as error:
+        print("Error while connecting to MySQL:", error)
+        return None
 
 #FUNCTIONS
 #1. Add inventory to a warehouse (table product)
@@ -20,10 +24,11 @@ def add_inventory_to_product():
     cursor = cnx.cursor()
     
     # Input product details
+    print("Caution: Following fields cannot be null: product id, name, quantity and cost")
     id = input("Enter product id: ")
     name = input("Enter product name: ")
-    details = input("Enter product details: ")
-    material_care = input("Enter material care: ")
+    details = input("Enter product details: ") or "NA"
+    material_care = input("Enter material care: ") or "NA"
     quantity = input("Enter quantity: ")
     cost = input("Enter cost: ")
         
@@ -33,110 +38,117 @@ def add_inventory_to_product():
                     VALUES (%s, %s, %s, %s, %s, %s, %s)"""
         cursor.execute(query, (id, name, details, material_care, quantity, cost, 1,))
         cnx.commit()
-    except:
+    except mysql.connector.Error as error:
         cnx.rollback()
         print("Rolled back on product: ", id, name)
         print("Error adding inventory to product")
+        print("MySQL Error:", error)
 
     # Input product specialization
     print("\n1. Apparel | 2. Home | 3. Stationery | 4. Travel | 5. Health and Beauty | 6. Food")
     choice = input("Choose category: ")
 
     # auto-generated attribute
-    upc = str(random.randint(10**13, 10**14 - 1))
+    upc = str(random.randint(10**12, 10**13 - 1))
 
+    # apparel
     if choice == '1':
-        category = 'apparel'
-        size = input("Enter product size (max 5 characters): ")
-        gender = input("Enter product gender (F/M/U): ")
-        color = input("Enter product color (max 20 characters): ")
-        material = input("Enter product material (max 15 characters): ")
-        purpose = input("Enter product purpose (max 20 characters): ")
+        size = input("Enter product size (max 5 characters): ") or "NA"
+        gender = input("Enter product gender (F/M/U): ") or "NA"
+        color = input("Enter product color (max 20 characters): ") or "NA"
+        material = input("Enter product material (max 15 characters): ") or "NA"
+        purpose = input("Enter product purpose (max 20 characters): ") or "NA"
+        # Crow-neck Sweater
         try:
-            query = """INSERT INTO %s (id, UPC, size, gender, color, material, purpose) 
-                        VALUES (%s, %s, %s, %s, %s, %s)"""
-            cursor.execute(query, (category, id, upc, size, gender, color, material, purpose))
+            query = """INSERT INTO apparel (id, UPC, size, gender, color, material, purpose) 
+                        VALUES (%s, %s, %s, %s, %s, %s, %s)"""
+            cursor.execute(query, (id, upc, size, gender, color, material, purpose,))
             cnx.commit()
-        except:
+        except mysql.connector.Error as error:
             cnx.rollback()
-            print("Rolled back on specialization: ", id, name, category)
-            print("Error adding product specialization")
+            print("Rolled back on specialization: ", id, name)
+            print("MySQL Error:", error)
+    
+    # home
     elif choice == '2':
-        category = 'home'
-        color = input("Enter product color (max 20 characters): ")
-        purpose = input("Enter product purpose (max 20 characters): ")
-        dimension = input("Enter product dimension (max 50 characters): ")
+        color = input("Enter product color (max 20 characters): ") or "NA"
+        purpose = input("Enter product purpose (max 20 characters): ") or "NA"
+        dimension = input("Enter product dimension (max 50 characters): ") or "NA"
         try:
-            query = """INSERT INTO %s (id, UPC, color, purpose, dimension) 
+            query = """INSERT INTO home (id, UPC, color, purpose, dimension) 
                         VALUES (%s, %s, %s, %s, %s)"""
-            cursor.execute(query, (category, id, upc, color, purpose, dimension))
+            cursor.execute(query, (id, upc, color, purpose, dimension))
             cnx.commit()
-        except:
+        except mysql.connector.Error as error:
             cnx.rollback()
-            print("Rolled back on specialization: ", id, name, category)
-            print("Error adding product specialization")
+            print("Rolled back on specialization: ", id, name)
+            print("MySQL Error:", error)
+    
+    # stationery
     elif choice == '3':
-        category = 'stationery'
-        type = input("Enter product type (max 20 characters): ")
-        size = input("Enter product size (max 20 characters): ")
-        color = input("Enter product color (max 20 characters): ")
-        material = input("Enter product material (max 15 characters): ")
-        purpose = input("Enter product purpose (max 20 characters): ")
+        type = input("Enter product type (max 20 characters): ") or "NA"
+        size = input("Enter product size (max 20 characters): ") or "NA"
+        color = input("Enter product color (max 20 characters): ") or "NA"
+        material = input("Enter product material (max 15 characters): ") or "NA"
+        purpose = input("Enter product purpose (max 20 characters): ") or "NA"
         try:
-            query = """INSERT INTO %s (id, UPC, type, size, color, material, purpose) 
+            query = """INSERT INTO stationery (id, UPC, type, size, color, material, purpose) 
                         VALUES (%s, %s, %s, %s, %s, %s, %s)"""
-            cursor.execute(query, (category, id, upc, type, size, color, material, purpose))
+            cursor.execute(query, (id, upc, type, size, color, material, purpose))
             cnx.commit()
-        except:
+        except mysql.connector.Error as error:
             cnx.rollback()
-            print("Rolled back on specialization: ", id, name, category)
-            print("Error adding product specialization")
+            print("Rolled back on specialization: ", id, name)
+            print("MySQL Error:", error)
+
+    # travel
     elif choice == '4':
-        category = 'travel'
-        type = input("Enter product type (max 20 characters): ")
-        size = input("Enter product size (max 20 characters): ")
-        color = input("Enter product color (max 20 characters): ")
-        material = input("Enter product material (max 15 characters): ")
-        purpose = input("Enter product purpose (max 20 characters): ")
+        type = input("Enter product type (max 20 characters): ") or "NA"
+        size = input("Enter product size (max 20 characters): ") or "NA"
+        color = input("Enter product color (max 20 characters): ") or "NA"
+        material = input("Enter product material (max 15 characters): ") or "NA"
+        purpose = input("Enter product purpose (max 20 characters): ") or "NA"
         try:
-            query = """INSERT INTO %s (id, UPC, type, size, color, material, purpose) 
+            query = """INSERT INTO travel (id, UPC, type, size, color, material, purpose) 
                         VALUES (%s, %s, %s, %s, %s, %s, %s)"""
-            cursor.execute(query, (category, id, upc, type, size, color, material, purpose))
+            cursor.execute(query, (id, upc, type, size, color, material, purpose))
             cnx.commit()
-        except:
+        except mysql.connector.Error as error:
             cnx.rollback()
-            print("Rolled back on specialization: ", id, name, category)
-            print("Error adding product specialization")
+            print("Rolled back on specialization: ", id, name)
+            print("MySQL Error:", error)
+
+    # health_beauty
     elif choice == '5':
-        category = 'health_beauty'
-        type = input("Enter product type (max 20 characters): ")
-        size = input("Enter product size (max 20 characters): ")
-        material = input("Enter product material (max 15 characters): ")
-        purpose = input("Enter product purpose (max 20 characters): ")
+        type = input("Enter product type (max 20 characters): ") or "NA"
+        size = input("Enter product size (max 20 characters): ") or "NA"
+        material = input("Enter product material (max 15 characters): ") or "NA"
+        purpose = input("Enter product purpose (max 20 characters): ") or "NA"
         try:
-            query = """INSERT INTO %s (id, UPC, type, size, material, purpose) 
+            query = """INSERT INTO health_beauty (id, UPC, type, size, material, purpose) 
                         VALUES (%s, %s, %s, %s, %s, %s)"""
-            cursor.execute(query, (category, id, upc, type, size, material, purpose))
+            cursor.execute(query, (id, upc, type, size, material, purpose))
             cnx.commit()
-        except:
+        except mysql.connector.Error as error:
             cnx.rollback()
-            print("Rolled back on specialization: ", id, name, category)
-            print("Error adding product specialization")
+            print("Rolled back on specialization: ", id, name)
+            print("MySQL Error:", error)
+
+    # food
     elif choice == '6':
-        category = 'food'
-        type = input("Enter product type (max 20 characters): ")
-        size = input("Enter product size (max 20 characters): ")
-        material = input("Enter product material (max 15 characters): ")
-        purpose = input("Enter product purpose (max 20 characters): ")
+        type = input("Enter product type (max 20 characters): ") or "NA"
+        size = input("Enter product size (max 20 characters): ") or "NA"
+        material = input("Enter product material (max 15 characters): ") or "NA"
+        purpose = input("Enter product purpose (max 20 characters): ") or "NA"
         try:
-            query = """INSERT INTO %s (id, UPC, type, size, material, purpose) 
+            query = """INSERT INTO food (id, UPC, type, size, material, purpose) 
                         VALUES (%s, %s, %s, %s, %s, %s)"""
-            cursor.execute(query, (category, id, upc, type, size, material, purpose))
+            cursor.execute(query, (id, upc, type, size, material, purpose))
             cnx.commit()
-        except:
+        except mysql.connector.Error as error:
             cnx.rollback()
-            print("Rolled back on specialization: ", id, name, category)
-            print("Error adding product specialization")
+            print("Rolled back on specialization: ", id, name)
+            print("MySQL Error:", error)
     else:
         print("Invalid choice. Failed to add product specialization. Please contact your DB admin")
     
