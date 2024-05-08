@@ -215,20 +215,20 @@ def most_popular_product_combinations(product_id):
         cnx = connect_to_database()
         cursor = cnx.cursor()
         query = """
-            WITH P001_transaction AS (
+            WITH product_transaction AS (
                 SELECT transaction_id
                 FROM sales
-                WHERE product_id = 'P001'
+                WHERE product_id = %s
             )
             SELECT s.product_id, p.name, COUNT(*) AS count
             FROM sales s, product p
-            WHERE transaction_id IN (SELECT transaction_id FROM P001_transaction)
+            WHERE transaction_id IN (SELECT transaction_id FROM product_transaction)
                 AND NOT s.product_id = %s
                 AND s.product_id = p.id
             GROUP BY s.product_id
             ORDER BY count DESC;
         """
-        cursor.execute(query, (product_id,))
+        cursor.execute(query, (product_id, product_id))
         results = cursor.fetchall()
         cursor.close()
         cnx.close()
@@ -248,4 +248,4 @@ if __name__ == "__main__":
     # print("\nProducts with highest profit margin:", products_with_highest_profit_margin())
     print("\nSales performance of product across stores:", sales_performance_of_product_across_stores('P001'))
     # print("\nStores with highest percentage of repeat customers:", stores_with_highest_percentage_of_repeat_customers())
-    # print("\nMost popular product combinations:", most_popular_product_combinations('P015'))
+    print("\nMost popular product combinations:", most_popular_product_combinations('P015'))
