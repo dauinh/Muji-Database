@@ -43,6 +43,16 @@ def add_inventory_to_product():
         print("Rolled back on product: ", id, name)
         print("Error adding inventory to product")
         print("MySQL Error:", error)
+    
+    cursor.close()
+    cnx.close()
+    
+    return id
+
+#1.2. Add new inventory to appropiate specialization table
+def add_inventory_to_specialization(product_id):
+    cnx = connect_to_database()
+    cursor = cnx.cursor()
 
     # Input product specialization
     print("\n1. Apparel | 2. Home | 3. Stationery | 4. Travel | 5. Health and Beauty | 6. Food")
@@ -62,11 +72,11 @@ def add_inventory_to_product():
         try:
             query = """INSERT INTO apparel (id, UPC, size, gender, color, material, purpose) 
                         VALUES (%s, %s, %s, %s, %s, %s, %s)"""
-            cursor.execute(query, (id, upc, size, gender, color, material, purpose,))
+            cursor.execute(query, (product_id, upc, size, gender, color, material, purpose,))
             cnx.commit()
         except mysql.connector.Error as error:
             cnx.rollback()
-            print("Rolled back on specialization: ", id, name)
+            print("Rolled back on specialization: ", product_id)
             print("MySQL Error:", error)
     
     # home
@@ -77,11 +87,11 @@ def add_inventory_to_product():
         try:
             query = """INSERT INTO home (id, UPC, color, purpose, dimension) 
                         VALUES (%s, %s, %s, %s, %s)"""
-            cursor.execute(query, (id, upc, color, purpose, dimension))
+            cursor.execute(query, (product_id, upc, color, purpose, dimension))
             cnx.commit()
         except mysql.connector.Error as error:
             cnx.rollback()
-            print("Rolled back on specialization: ", id, name)
+            print("Rolled back on specialization: ", product_id)
             print("MySQL Error:", error)
     
     # stationery
@@ -94,11 +104,11 @@ def add_inventory_to_product():
         try:
             query = """INSERT INTO stationery (id, UPC, type, size, color, material, purpose) 
                         VALUES (%s, %s, %s, %s, %s, %s, %s)"""
-            cursor.execute(query, (id, upc, type, size, color, material, purpose))
+            cursor.execute(query, (product_id, upc, type, size, color, material, purpose))
             cnx.commit()
         except mysql.connector.Error as error:
             cnx.rollback()
-            print("Rolled back on specialization: ", id, name)
+            print("Rolled back on specialization: ", product_id)
             print("MySQL Error:", error)
 
     # travel
@@ -111,11 +121,11 @@ def add_inventory_to_product():
         try:
             query = """INSERT INTO travel (id, UPC, type, size, color, material, purpose) 
                         VALUES (%s, %s, %s, %s, %s, %s, %s)"""
-            cursor.execute(query, (id, upc, type, size, color, material, purpose))
+            cursor.execute(query, (product_id, upc, type, size, color, material, purpose))
             cnx.commit()
         except mysql.connector.Error as error:
             cnx.rollback()
-            print("Rolled back on specialization: ", id, name)
+            print("Rolled back on specialization: ", product_id)
             print("MySQL Error:", error)
 
     # health_beauty
@@ -127,11 +137,11 @@ def add_inventory_to_product():
         try:
             query = """INSERT INTO health_beauty (id, UPC, type, size, material, purpose) 
                         VALUES (%s, %s, %s, %s, %s, %s)"""
-            cursor.execute(query, (id, upc, type, size, material, purpose))
+            cursor.execute(query, (product_id, upc, type, size, material, purpose))
             cnx.commit()
         except mysql.connector.Error as error:
             cnx.rollback()
-            print("Rolled back on specialization: ", id, name)
+            print("Rolled back on specialization: ", product_id)
             print("MySQL Error:", error)
 
     # food
@@ -143,18 +153,17 @@ def add_inventory_to_product():
         try:
             query = """INSERT INTO food (id, UPC, type, size, material, purpose) 
                         VALUES (%s, %s, %s, %s, %s, %s)"""
-            cursor.execute(query, (id, upc, type, size, material, purpose))
+            cursor.execute(query, (product_id, upc, type, size, material, purpose))
             cnx.commit()
         except mysql.connector.Error as error:
             cnx.rollback()
-            print("Rolled back on specialization: ", id, name)
+            print("Rolled back on specialization: ", product_id)
             print("MySQL Error:", error)
     else:
         print("Invalid choice. Failed to add product specialization. Please contact your DB admin")
     
     cursor.close()
     cnx.close()
-
 
 #2. Add inventory to a store from a warehouse 
 #2.1. Check the inventory of the product in the warehouse

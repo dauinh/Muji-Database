@@ -97,7 +97,8 @@ def main():
                     while chosen_num != "#":
                         match chosen_num:
                             case '1':
-                                add_inventory.add_inventory_to_product()
+                                product_id = add_inventory.add_inventory_to_product()
+                                add_inventory.add_inventory_to_specialization(product_id)
                             case '2':
                                 add_inventory.add_inventory_to_store()
                             case '3':
