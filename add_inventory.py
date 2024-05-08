@@ -50,9 +50,33 @@ def add_inventory_to_product():
     return id
 
 #1.2. Add new inventory to appropiate specialization table
+# Helper method
+def get_category2id(cnx):
+    cursor = cnx.cursor()
+
+    category2id = {}
+    try:
+        query = """SELECT * FROM category"""
+        cursor.execute(query)
+        results = cursor.fetchall()
+        for id, category in results:
+            category2id[category] = id
+    except mysql.connector.Error as error:
+        cnx.rollback()
+        print("Rolled back on: ")
+        print("MySQL Error:", error)
+
+    cursor.close()
+    
+    return category2id
+
 def add_inventory_to_specialization(product_id):
     cnx = connect_to_database()
     cursor = cnx.cursor()
+
+    # Get category id
+    category2id = get_category2id(cnx)
+    category_id = ''
 
     # Input product specialization
     print("\n1. Apparel | 2. Home | 3. Stationery | 4. Travel | 5. Health and Beauty | 6. Food")
@@ -63,12 +87,12 @@ def add_inventory_to_specialization(product_id):
 
     # apparel
     if choice == '1':
+        category_id = category2id['Apparel']
         size = input("Enter product size (max 5 characters): ") or "NA"
         gender = input("Enter product gender (F/M/U): ") or "NA"
         color = input("Enter product color (max 20 characters): ") or "NA"
         material = input("Enter product material (max 15 characters): ") or "NA"
         purpose = input("Enter product purpose (max 20 characters): ") or "NA"
-        # Crow-neck Sweater
         try:
             query = """INSERT INTO apparel (id, UPC, size, gender, color, material, purpose) 
                         VALUES (%s, %s, %s, %s, %s, %s, %s)"""
@@ -81,6 +105,7 @@ def add_inventory_to_specialization(product_id):
     
     # home
     elif choice == '2':
+        category_id = category2id['Home']
         color = input("Enter product color (max 20 characters): ") or "NA"
         purpose = input("Enter product purpose (max 20 characters): ") or "NA"
         dimension = input("Enter product dimension (max 50 characters): ") or "NA"
@@ -96,6 +121,7 @@ def add_inventory_to_specialization(product_id):
     
     # stationery
     elif choice == '3':
+        category_id = category2id['Stationery']
         type = input("Enter product type (max 20 characters): ") or "NA"
         size = input("Enter product size (max 20 characters): ") or "NA"
         color = input("Enter product color (max 20 characters): ") or "NA"
@@ -113,6 +139,7 @@ def add_inventory_to_specialization(product_id):
 
     # travel
     elif choice == '4':
+        category_id = category2id['Travel']
         type = input("Enter product type (max 20 characters): ") or "NA"
         size = input("Enter product size (max 20 characters): ") or "NA"
         color = input("Enter product color (max 20 characters): ") or "NA"
@@ -130,6 +157,7 @@ def add_inventory_to_specialization(product_id):
 
     # health_beauty
     elif choice == '5':
+        category_id = category2id['Health & Beauty']
         type = input("Enter product type (max 20 characters): ") or "NA"
         size = input("Enter product size (max 20 characters): ") or "NA"
         material = input("Enter product material (max 15 characters): ") or "NA"
@@ -146,6 +174,7 @@ def add_inventory_to_specialization(product_id):
 
     # food
     elif choice == '6':
+        category_id = category2id['Food']
         type = input("Enter product type (max 20 characters): ") or "NA"
         size = input("Enter product size (max 20 characters): ") or "NA"
         material = input("Enter product material (max 15 characters): ") or "NA"
@@ -161,9 +190,21 @@ def add_inventory_to_specialization(product_id):
             print("MySQL Error:", error)
     else:
         print("Invalid choice. Failed to add product specialization. Please contact your DB admin")
-    
+
+    # Insert into belongs table
+    try:
+        query = """INSERT INTO belongs (product_id, category_id) 
+                    VALUES (%s, %s)"""
+        cursor.execute(query, (product_id, category_id))
+        cnx.commit()
+    except mysql.connector.Error as error:
+        cnx.rollback()
+        print("Rolled back on: ", product_id)
+        print("MySQL Error:", error)
+
     cursor.close()
     cnx.close()
+
 
 #2. Add inventory to a store from a warehouse 
 #2.1. Check the inventory of the product in the warehouse
@@ -225,4 +266,5 @@ def add_inventory_to_store():
         print("An error occurs.")
 
 if __name__ == "__main__":
-    add_inventory_to_product()
+    # add_inventory_to_product()
+    test_spec()
