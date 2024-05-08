@@ -14,7 +14,13 @@ The objective of this project is to create a database that stores information ab
 
 ## Installation
 
-To set up the project, you need to have Python installed along with the following packages:
+To set up the project, you need to have Python and `pip` installed. Then run this command to install all required packages.
+
+```bash
+   pip install -r requirements. txt
+```
+
+Alternatively, you can install the following packages by yourself:
 
 1. **mysql-connector-python**: A package used to connect Python with MySQL databases.
    ```bash
@@ -23,10 +29,6 @@ To set up the project, you need to have Python installed along with the followin
 2. **python-dotenv**: A package to load environment variables from a `.env` file.
    ```bash
    pip install python-dotenv
-   ```
-3. **pprint**: A built-in Python package for "pretty-printing" complex data structures.
-   ```bash
-   pip install pprintpp
    ```
 
 ## Getting Started
