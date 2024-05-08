@@ -231,7 +231,7 @@ def add_inventory_to_store():
             
             if current_quantity >= number_of_entities:
                 cursor.execute(update_query, (current_quantity - number_of_entities, product_id,))
-                print(f"Remove {number_of_entities} units of product. Current quantity in warehouse is {current_quantity-number_of_entities}")
+                #print(f"Moved {number_of_entities} units of product from warehouse. Current quantity in warehouse for this product is {current_quantity-number_of_entities}")
         except:
             print("Product doesn't exist.")
         #2.3. Add n unit(s) of the product to the store
@@ -240,23 +240,24 @@ def add_inventory_to_store():
             get_current_quantity_store = "SELECT quantity FROM owns WHERE product_id=%s AND store_id=%s"
             cursor.execute(get_current_quantity_store, (product_id,store_id,))
             current_quantity_store = cursor.fetchall()[0][0]
-            print("current quantity of product in store", current_quantity_store)
+            #print("Current quantity of this product in store: ", current_quantity_store)
             if current_quantity != 0:
-                print('product already exists in store. Need to update quantity')
+                #print('product already exists in store. Need to update quantity')
                 update_quantity = current_quantity_store + number_of_entities
-                print("update quantity", update_quantity)
+                # print("update quantity", update_quantity)
                 update_query_owns = "UPDATE owns \
                                     SET quantity = %s\
                                     WHERE product_id = %s\
                                     AND store_id = %s"
                 cursor.execute(update_query_owns, (update_quantity, product_id, store_id,))
-                print(f"Added {number_of_entities} of product_id {product_id} into storeId {store_id}")
+                print(f"Added {number_of_entities} unit of product_id {product_id} into storeId {store_id}")
+                print("Current quantity of this product in store: ", current_quantity_store + number_of_entities)
             else:
-                print("product doesn't exist in store. Need to create new record for this product")
+                print("Product doesn't exist in store. Need to create new record for this product")
                 insert_query_owns = "INSERT INTO owns (product_id, store_id, price, quantity) VALUES %s"
                 cursor.execute(insert_query_owns)
-                print("...")
-                print("Added new record to table owns")
+                # print("...")
+                # print("Added new record to table owns")
         except:
             print("Error adding product into DB. Check storeId and productId.")
         cnx.commit()
